@@ -1,16 +1,24 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // if you use react-router
 import "./Header.css";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate(); // for programmatic navigation
 
   const toggleMenu = () => setIsOpen(!isOpen);
   const closeMenu = () => setIsOpen(false);
 
+  const goHome = () => {
+    // if using react-router
+    navigate("/"); 
+    closeMenu();
+  };
+
   return (
     <header className="header">
       {/* Logo */}
-      <div className="logo-container">
+      <div className="logo-container" onClick={goHome} style={{ cursor: "pointer" }}>
         <img src="/icons/axis-bank.png" alt="Logo" className="logo" />
       </div>
 
@@ -23,7 +31,7 @@ const Header = () => {
         <a href="#services">Card Limit Increase Application</a>
         <a href="#services">Card Seperate Merged Application</a>
         <a href="#services">Card Activation Application</a>
-        <a href="#services">Login</a>
+        <a href="#home">Login</a>
       </nav>
 
       {/* Hamburger */}
@@ -36,13 +44,12 @@ const Header = () => {
         <span></span>
       </div>
 
-      {/* Mobile Full-Width Menu */}
+      {/* Mobile Full‑Width Menu */}
       {isOpen && (
         <div className="mobile-menu-wrapper">
           {/* Top bar inside mobile menu */}
-          <div className="mobile-menu-top">
+          <div className="mobile-menu-top" onClick={goHome} style={{ cursor: "pointer" }}>
             <img src="/icons/axis-bank.png" alt="Logo" className="mobile-logo" />
-           
           </div>
 
           {/* Mobile Links */}
@@ -54,7 +61,7 @@ const Header = () => {
             <a href="#contact" onClick={closeMenu}>Card Limit Increase Application</a>
             <a href="#contact" onClick={closeMenu}>Card Seperate Merged Card</a>
             <a href="#contact" onClick={closeMenu}>Card Activation Application</a>
-            <a href="#contact" onClick={closeMenu}>Login</a>
+            <a href="#home" onClick={closeMenu}>Login</a>
           </nav>
         </div>
       )}
