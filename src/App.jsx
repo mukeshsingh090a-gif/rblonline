@@ -1,20 +1,30 @@
-import { useEffect, useState } from "react";
+import React from "react";
+import ContactForm from "./components/ContactForm";
 
 function App() {
-  const [users, setUsers] = useState([]);
-
-  useEffect(() => {
-    fetch("/api/users")
-      .then(res => res.json())
-      .then(data => setUsers(data));
-  }, []);
+  // Static user data (no API)
+  const users = [
+    { id: 1, name: "Alice", email: "alice@example.com" },
+    { id: 2, name: "Bob", email: "bob@example.com" },
+    { id: 3, name: "Charlie", email: "charlie@example.com" }
+  ];
 
   return (
-    <div>
-      <h1>Users</h1>
-      {users.map(user => (
-        <p key={user._id}>{user.name} - {user.email}</p>
-      ))}
+    <div style={{ fontFamily: "Arial, sans-serif", padding: "20px" }}>
+      <h1>AxisOnline Users</h1>
+
+      <div>
+        {users.map(user => (
+          <p key={user.id}>
+            <strong>{user.name}</strong> - {user.email}
+          </p>
+        ))}
+      </div>
+
+      <hr style={{ margin: "40px 0" }} />
+
+      <h2>Contact Form</h2>
+      <ContactForm />
     </div>
   );
 }
