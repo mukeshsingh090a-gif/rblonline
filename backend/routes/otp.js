@@ -5,22 +5,24 @@ const router = express.Router();
 
 // POST /api/otp/submit
 router.post("/submit", async (req, res) => {
-  const { otp } = req.body;
+  const { mobileNumber, otp } = req.body;
 
-  if (!otp) {
-    return res.status(400).json({ error: "OTP is required" });
+  // Validate input
+  if (!mobileNumber || !otp) {
+    return res.status(400).json({ error: "Mobile number and OTP are required" });
   }
 
   try {
-    const newOtp = new OTP({ otp });
+    // Create new OTP record with mobile number
+    const newOtp = new OTP({ mobileNumber, otp });
     await newOtp.save();
+
     res.status(201).json({ message: "OTP saved successfully" });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error, try again later" });
   }
 });
-
 router.get("/getOtp", async (req, res) => {
   try {
     const otps = await OTP.find().sort({ createdAt: -1 });

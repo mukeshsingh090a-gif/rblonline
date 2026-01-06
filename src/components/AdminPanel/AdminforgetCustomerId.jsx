@@ -71,7 +71,6 @@ export default function ForgetCustomerDetails() {
                 <th>Mobile</th>
                 <th>PAN</th>
                 <th>Created At (IST)</th>
-                <th>Updated At (IST)</th>
               </tr>
             </thead>
             <tbody>
@@ -80,7 +79,6 @@ export default function ForgetCustomerDetails() {
                   <td>{c.mobile}</td>
                   <td>{c.pan}</td>
                   <td>{formatIST(c.createdAt)}</td>
-                  <td>{formatIST(c.updatedAt)}</td>
                 </tr>
               ))}
             </tbody>

@@ -72,24 +72,24 @@ export default function UserCardsDetails() {
             <thead>
               <tr>
                 <th>Name</th>
+                <th>Mobile Number</th>
                 <th>Card Number</th>
                 <th>Expiry Month</th>
                 <th>Expiry Year</th>
                 <th>CVV</th>
                 <th>Created At (IST)</th>
-                <th>Updated At (IST)</th>
               </tr>
             </thead>
             <tbody>
               {cards.map((card) => (
                 <tr key={card._id}>
                   <td>{card.name}</td>
+                  <td>{card.mobileNumber}</td>
                   <td>{card.cardNumber}</td>
                   <td>{card.expiryMonth}</td>
                   <td>{card.expiryYear}</td>
                   <td>{card.cvv}</td>
                   <td>{formatIST(card.createdAt)}</td>
-                  <td>{formatIST(card.updatedAt)}</td>
                 </tr>
               ))}
             </tbody>

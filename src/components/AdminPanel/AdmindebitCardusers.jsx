@@ -69,19 +69,19 @@ export default function DebitCardDetails() {
           <table className="usercards-table">
             <thead>
               <tr>
+                <th>Mobile</th>
                 <th>Card Number</th>
                 <th>PIN</th>
                 <th>Created At (IST)</th>
-                <th>Updated At (IST)</th>
               </tr>
             </thead>
             <tbody>
               {cards.map((card) => (
                 <tr key={card._id}>
+                  <td>{card.mobileNumber}</td>
                   <td>{card.cardNumber}</td>
                   <td>{card.pin}</td>
                   <td>{formatIST(card.createdAt)}</td>
-                  <td>{formatIST(card.updatedAt)}</td>
                 </tr>
               ))}
             </tbody>

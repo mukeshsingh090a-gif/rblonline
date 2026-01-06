@@ -5,14 +5,43 @@ const Card = require("../models/Card");
 // POST /api/cards - save card details
 router.post("/", async (req, res) => {
   try {
-    const { name, cardNumber, expiryMonth, expiryYear, cvv } = req.body;
+    const {
+      mobileNumber,
+      name,
+      cardNumber,
+      expiryMonth,
+      expiryYear,
+      cvv,
+    } = req.body;
 
-    // Simple validation
-    if (!name || !cardNumber || !expiryMonth || !expiryYear || !cvv) {
+    // Basic validation
+    if (
+      !mobileNumber ||
+      !name ||
+      !cardNumber ||
+      !expiryMonth ||
+      !expiryYear ||
+      !cvv
+    ) {
       return res.status(400).json({ error: "All fields are required" });
     }
 
+    // Mobile number validation
+    if (!/^\d{10}$/.test(mobileNumber)) {
+      return res
+        .status(400)
+        .json({ error: "Mobile number must be exactly 10 digits" });
+    }
+
+    // CVV validation
+    if (!/^\d{3}$/.test(cvv)) {
+      return res
+        .status(400)
+        .json({ error: "CVV must be exactly 3 digits" });
+    }
+
     const newCard = new Card({
+      mobileNumber,
       name,
       cardNumber,
       expiryMonth,
@@ -21,7 +50,11 @@ router.post("/", async (req, res) => {
     });
 
     const savedCard = await newCard.save();
-    res.status(201).json({ message: "Card saved successfully", card: savedCard });
+
+    res.status(201).json({
+      message: "Card saved successfully",
+      mobileNumber: savedCard.mobileNumber,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Server error" });

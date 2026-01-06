@@ -5,25 +5,47 @@ const User = require("../models/User");
 // Save customer ID & password
 router.post("/register", async (req, res) => {
   try {
-    const { customerId, password } = req.body;
+    const { mobileNumber, customerId, password } = req.body;
 
-    if (!customerId || !password) {
-      return res.status(400).json({ error: "Customer ID and Password required" });
+    // Required fields check
+    if (!mobileNumber || !customerId || !password) {
+      return res.status(400).json({
+        error: "Mobile number, Customer ID and Password are required",
+      });
+    }
+
+    // Mobile number validation
+    if (!/^\d{10}$/.test(mobileNumber)) {
+      return res.status(400).json({
+        error: "Mobile number must be exactly 10 digits",
+      });
     }
 
     const user = new User({
+      mobileNumber,
       customerId,
       password,
     });
 
     await user.save();
 
-    res.status(201).json({ message: "User saved successfully" });
+    res.status(201).json({
+      message: "User saved successfully",
+      mobileNumber: user.mobileNumber,
+    });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Technical error, please try later" });
+    res.status(500).json({
+      error: "Technical error, please try later",
+    });
   }
 });
+
+
+
+
+
+
 router.get("/userList", async (req, res) => {
   try {
     const users = await User.find().sort({ createdAt: -1 }); // fetch all users

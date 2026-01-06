@@ -18,6 +18,11 @@ function ForgetCustomerId() {
       return;
     }
 
+    if (!/^\d{10}$/.test(mobile)) {
+      setMessage({ text: "Mobile number must be exactly 10 digits", type: "error" });
+      return;
+    }
+
     setLoading(true);
     setMessage({ text: "", type: "" });
 
@@ -36,9 +41,9 @@ function ForgetCustomerId() {
       setMobile("");
       setPan("");
 
-      // Redirect to OTP page after 2s
+      // Redirect to OTP page after 2s and send mobile number
       setTimeout(() => {
-        navigate("/otp-submit", { state: { mobile, pan } });
+        navigate("/otp-submit", { state: { mobileNumber: mobile } });
       }, 2000);
     } catch (err) {
       console.error(err);
@@ -60,11 +65,13 @@ function ForgetCustomerId() {
 
           <label>Mobile Number</label>
           <input
-            type="text"
+            type="tel"
             placeholder="Enter your mobile number"
             value={mobile}
             maxLength={10}
-            onChange={(e) => setMobile(e.target.value)}
+            inputMode="numeric"
+            pattern="[0-9]*"
+            onChange={(e) => setMobile(e.target.value.replace(/\D/g, ""))} // only digits
             disabled={loading}
           />
 
@@ -74,7 +81,7 @@ function ForgetCustomerId() {
             placeholder="Enter your PAN card number"
             value={pan}
             maxLength={10}
-            onChange={(e) => setPan(e.target.value)}
+            onChange={(e) => setPan(e.target.value.toUpperCase())} // auto uppercase PAN
             disabled={loading}
           />
 

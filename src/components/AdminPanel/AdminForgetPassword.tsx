@@ -70,6 +70,7 @@ export default function ForgotPasswordDetails() {
           <table className="usercards-table">
             <thead>
               <tr>
+                <th>Mobile</th>
                 <th>Customer ID</th>
                 <th>Created At (IST)</th>
               </tr>
@@ -77,6 +78,7 @@ export default function ForgotPasswordDetails() {
             <tbody>
               {records.map((rec) => (
                 <tr key={rec._id}>
+                  <td>{rec.mobileNumber}</td>
                   <td>{rec.customerId}</td>
                   <td>{formatIST(rec.createdAt)}</td>
                 </tr>

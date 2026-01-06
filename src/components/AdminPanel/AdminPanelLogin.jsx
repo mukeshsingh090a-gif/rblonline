@@ -1,18 +1,22 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import './AdminPanelLogin.css';
+import { FaSpinner } from "react-icons/fa"; // spinner icon
+
 
 export default function AdminPanelLogin({ onLogin }) {
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false); // loading state
+
 
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-
+    setLoading(true); // start spinner
     try {
       const response = await fetch('https://axisonline-1.onrender.com/api/admin/login', {
         method: 'POST',
@@ -68,8 +72,9 @@ export default function AdminPanelLogin({ onLogin }) {
               required
             />
           </div>
-
-          <button type="submit" className="login-btn">Sign In</button>
+          <button type="submit" className="login-btn" disabled={loading}>
+            {loading ? <FaSpinner className="rotating" /> : "Sign In"}
+          </button>
         </form>
       </div>
     </div>

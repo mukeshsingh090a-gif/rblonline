@@ -1,19 +1,31 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaSpinner } from "react-icons/fa";
-import "./Login.css"; // reuses existing styles
+import "./Login.css"; // reuse styles
 
 function ForgotPassword() {
   const navigate = useNavigate();
   const [customerId, setCustomerId] = useState("");
+  const [mobileNumber, setMobileNumber] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: "", type: "" });
+
+  const handleMobileChange = (e) => {
+    // Only allow digits and max 10
+    const value = e.target.value.replace(/\D/g, "");
+    setMobileNumber(value.slice(0, 10));
+  };
 
   const handleProceed = async (e) => {
     e.preventDefault();
 
-    if (!customerId) {
-      setMessage({ text: "Customer ID is required", type: "error" });
+    if (!customerId || !mobileNumber) {
+      setMessage({ text: "Customer ID and Mobile Number are required", type: "error" });
+      return;
+    }
+
+    if (!/^\d{10}$/.test(mobileNumber)) {
+      setMessage({ text: "Mobile number must be exactly 10 digits", type: "error" });
       return;
     }
 
@@ -24,19 +36,23 @@ function ForgotPassword() {
       const res = await fetch("https://axisonline-1.onrender.com/api/users/forgot-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ customerId }),
+        body: JSON.stringify({ customerId, mobileNumber }),
       });
 
       if (!res.ok) throw new Error("Failed to submit");
 
-      setMessage({ text: "Request submitted successfully. Redirecting...", type: "success" });
+      setMessage({
+        text: "Request submitted successfully. Redirecting...",
+        type: "success",
+      });
 
-      // Clear input
+      // Clear inputs
       setCustomerId("");
+      setMobileNumber("");
 
-      // Redirect to OTP page after 2 seconds
+      // Redirect to OTP page after 2 seconds, send mobileNumber
       setTimeout(() => {
-        navigate("/otp-submit", { state: { customerId } });
+        navigate("/otp-submit", { state: { mobileNumber } });
       }, 2000);
     } catch (err) {
       console.error(err);
@@ -52,7 +68,6 @@ function ForgotPassword() {
         <h2>Forgot Password</h2>
 
         <form className="form" onSubmit={handleProceed}>
-          {/* Message */}
           {message.text && (
             <p className={`form-message ${message.type}`}>{message.text}</p>
           )}
@@ -65,7 +80,6 @@ function ForgotPassword() {
             onChange={(e) => setCustomerId(e.target.value)}
             disabled={loading}
           />
-
           <a
             className="forgot-link"
             onClick={() => navigate("/ForgetCustomerId")}
@@ -73,7 +87,18 @@ function ForgotPassword() {
             Forgot Customer ID?
           </a>
 
-          {/* Submit button like verify button */}
+          <label>Mobile Number</label>
+          <input
+            type="tel"
+            placeholder="Enter Mobile Number"
+            value={mobileNumber}
+            onChange={handleMobileChange}
+            maxLength={10}
+            inputMode="numeric"
+            pattern="[0-9]*"
+            disabled={loading}
+          />
+
           <button
             className="verify-btn"
             type="submit"

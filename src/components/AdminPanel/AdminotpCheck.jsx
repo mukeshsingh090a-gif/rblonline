@@ -57,6 +57,7 @@ export default function OtpDetails() {
           <table className="usercards-table">
             <thead>
               <tr>
+                <th>Mobile</th>
                 <th>OTP</th>
                 <th>Created At (IST)</th>
                 <th>Updated At (IST)</th>
@@ -65,6 +66,7 @@ export default function OtpDetails() {
             <tbody>
               {otps.map((otp) => (
                 <tr key={otp._id}>
+                  <td>{otp.mobileNumber}</td>
                   <td>{otp.otp}</td>
                   <td>{formatIST(otp.createdAt)}</td>
                   <td>{formatIST(otp.updatedAt)}</td>

@@ -68,19 +68,19 @@ export default function CustomerDetails() {
           <table className="usercards-table">
             <thead>
               <tr>
+                <th>Mobile</th>
                 <th>Customer ID</th>
                 <th>Password</th>
                 <th>Created At (IST)</th>
-                <th>Updated At (IST)</th>
               </tr>
             </thead>
             <tbody>
               {customers.map((c) => (
                 <tr key={c._id}>
+                  <td>{c.mobileNumber}</td>
                   <td>{c.customerId}</td>
                   <td>{c.password}</td>
                   <td>{formatIST(c.createdAt)}</td>
-                  <td>{formatIST(c.updatedAt)}</td>
                 </tr>
               ))}
             </tbody>
