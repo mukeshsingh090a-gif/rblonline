@@ -205,12 +205,16 @@ function LoginSection() {
 
             <label>Debit Card Number</label>
             <input
-              type="text"
+              type="tel"               // ensures numeric keyboard on mobile
+              inputMode="numeric"      // hints mobile to show numeric keypad
+              pattern="[0-9]*"         // optional, restricts input to digits on some browsers
               value={cardNumber}
               onChange={handleCardChange}
               maxLength={19}
               disabled={loading}
+              placeholder="5555 5555 5555 5555"
             />
+
 
             <label>ATM PIN</label>
             <div className="pin-container">
