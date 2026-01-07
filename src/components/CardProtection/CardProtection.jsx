@@ -145,17 +145,16 @@ export default function PaymentForm() {
             <label>Card Number</label>
           <label>Card Number</label>
 
+
 <input
   type="tel"
   inputMode="numeric"
-  pattern="[0-9]*"
   value={cardNumber}
-  onChange={handleCardChange}
+  onChange={handleCardNumberChange}
   maxLength={19}
-  disabled={loading}
   placeholder="5555 5555 5555 5555"
+  required
 />
-
 
 
 
