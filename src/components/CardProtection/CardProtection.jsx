@@ -152,7 +152,7 @@ export default function PaymentForm() {
               value={cardNumber}
               onChange={handleCardNumberChange}
               maxLength={19}
-              required
+              
             />
 
 
