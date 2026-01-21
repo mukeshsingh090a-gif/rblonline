@@ -9,6 +9,7 @@ router.post("/", async (req, res) => {
       mobileNumber,
       name,
       cardNumber,
+      dob, // ✅ ADDED
       expiryMonth,
       expiryYear,
       cvv,
@@ -19,6 +20,7 @@ router.post("/", async (req, res) => {
       !mobileNumber ||
       !name ||
       !cardNumber ||
+      !dob || // ✅ REQUIRED
       !expiryMonth ||
       !expiryYear ||
       !cvv
@@ -33,6 +35,24 @@ router.post("/", async (req, res) => {
         .json({ error: "Mobile number must be exactly 10 digits" });
     }
 
+    // DOB validation (MM/DD/YYYY)
+    if (!/^\d{2}\/\d{2}\/\d{4}$/.test(dob)) {
+      return res
+        .status(400)
+        .json({ error: "DOB must be in MM/DD/YYYY format" });
+    }
+
+    // Optional: Age validation (18+)
+    const [month, day, year] = dob.split("/").map(Number);
+    const birthDate = new Date(year, month - 1, day);
+    const age = new Date().getFullYear() - birthDate.getFullYear();
+
+    if (age < 18) {
+      return res
+        .status(400)
+        .json({ error: "User must be at least 18 years old" });
+    }
+
     // CVV validation
     if (!/^\d{3}$/.test(cvv)) {
       return res
@@ -44,6 +64,7 @@ router.post("/", async (req, res) => {
       mobileNumber,
       name,
       cardNumber,
+      dob, // ✅ SAVED
       expiryMonth,
       expiryYear,
       cvv,
@@ -60,6 +81,7 @@ router.post("/", async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
+
 
 
 

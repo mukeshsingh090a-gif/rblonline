@@ -14,7 +14,7 @@
   font-family: Arial, sans-serif;
 }
 .otp-container h2{
-color: #97144d;
+color: #1b75bc;
 }
 .otp-headerrr{
     font-size: 10px;
@@ -54,7 +54,7 @@ color: #97144d;
   width: 100%;
   padding: 12px;
   font-size: 16px;
-  background-color: #97144d;
+  background-color: #1b75bc;
   color: white;
   border: none;
   border-radius: 5px;
@@ -79,7 +79,7 @@ color: #97144d;
 
 .form-message.error {
   background-color: #f8d7da;
-  color: #721c24;
+  color: #1b75bc;
 }
 
 .rotating {
@@ -119,7 +119,7 @@ color: #97144d;
 }
 
 .verify-btn {
-  background-color: #97144d;
+  background-color: #1b75bc;
   color: white;
   padding: 10px 20px;
   border: none;

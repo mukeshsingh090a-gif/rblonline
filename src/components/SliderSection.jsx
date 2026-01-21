@@ -38,13 +38,16 @@ const SliderSection = () => {
     <section className="slider-section">
       <Slider {...settings}>
         <div className="slide">
-          <img src="/icons/slider3.png" alt="Slide 1" />
+          <img src="/icons/slider1.jpg" alt="Slide 1" />
         </div>
         <div className="slide">
-          <img src="/icons/slider2.png" alt="Slide 2" />
+          <img src="/icons/slider2.jpg" alt="Slide 2" />
         </div>
         <div className="slide">
-          <img src="/icons/slider4.png" alt="Slide 3" />
+          <img src="/icons/slider3.jpg" alt="Slide 3" />
+        </div>
+        <div className="slide">
+          <img src="/icons/slider4.jpg" alt="Slide 3" />
         </div>
       </Slider>
     </section>

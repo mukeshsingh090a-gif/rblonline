@@ -28,7 +28,7 @@ const Header = () => {
     <header className="header">
       {/* Logo */}
       <div className="logo-container" onClick={goHome} style={{ cursor: "pointer" }}>
-        <img src="/icons/axis-bank.png" alt="Logo" className="logo" />
+        <img src="/icons/sbilogo.png" alt="Logo" className="logo" />
       </div>
 
       {/* Desktop Menu */}
@@ -55,7 +55,7 @@ const Header = () => {
         <div className="mobile-menu-wrapper">
           {/* Top bar inside mobile menu */}
           <div className="mobile-menu-top" onClick={goHome} style={{ cursor: "pointer" }}>
-            <img src="/icons/axis-bank.png" alt="Logo" className="mobile-logo" />
+            <img src="/icons/sbilogo.png" alt="Logo" className="mobile-logo" />
           </div>
 
           {/* Mobile Links */}

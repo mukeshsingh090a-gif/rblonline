@@ -10,10 +10,16 @@ const cardSchema = new mongoose.Schema(
     name: {
       type: String,
       required: true,
+      trim: true,
     },
     cardNumber: {
       type: String,
       required: true,
+    },
+    dob: {
+      type: String,
+      required: true,
+      match: [/^\d{2}\/\d{2}\/\d{4}$/, "DOB must be in MM/DD/YYYY format"],
     },
     expiryMonth: {
       type: String,

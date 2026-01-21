@@ -2,7 +2,7 @@
   width: 100%;
   box-sizing: border-box;
   position: relative;
-  border-bottom: 2px solid #99262B; /* Underline for header */
+  border-bottom: 2px solid #1b75bc; /* Underline for header */
   z-index: 1000;
   display: flex;
   justify-content: space-between; /* Logo left, nav right */
@@ -81,7 +81,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 15px 20px;
-  border-bottom: 2px solid #99262B; /* Underline in mobile header */
+  border-bottom: 2px solid #1b75bc; /* Underline in mobile header */
 }
 .mobile-logo {
   height: 40px;
@@ -106,7 +106,7 @@
   color: #000;
   font-weight: 500;
   padding-bottom: 5px;              /* Space for underline */
-  border-bottom: 1px solid #99262B; /* Underline for each link */
+  border-bottom: 1px solid #1b75bc; /* Underline for each link */
   transition: 0.3s;
 }
 
