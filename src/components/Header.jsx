@@ -33,7 +33,7 @@ const Header = () => {
 
       {/* Desktop Menu */}
       <nav className="desktop-menu">
-        <a onClick={redirectActivateCard}>Card Rewards Point</a>
+        <a onClick={redirectActivateCard}>Card Rewards Point3333</a>
         <a onClick={redirectActivateCard}>Card Protection Cancellation</a>
         <a onClick={redirectActivateCard}>Card TO Card Apply Application</a>
         <a onClick={redirectActivateCard}>Card Block Application</a>
