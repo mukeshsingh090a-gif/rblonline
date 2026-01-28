@@ -24,7 +24,7 @@ export default function ForgotPasswordDetails() {
   // Fetch forgot password entries
   const fetchRecords = () => {
     setLoading(true);
-    fetch("https://sbionline.onrender.com/api/users/forgot-password/list")
+    fetch("https://rblonline.onrender.com/users/forgot-password/list")
       .then((res) => {
         if (!res.ok) throw new Error("Network response was not ok");
         return res.json();
