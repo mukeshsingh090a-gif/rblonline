@@ -42,7 +42,7 @@
 .feature-btn {
   flex-shrink: 1;
   padding: 8px 15px;
-  background-color: #1b75bc;
+  background-color: #6c5055;
   color: #fff;
   border: none;
   border-radius: 5px;
@@ -53,7 +53,7 @@
 }
 
 .feature-btn:hover {
-  background-color: #7a1f22;
+  background-color: #6c5055;
 }
 
 /* OPTIONAL: On very small screens the container can scroll horizontally instead of wrapping */

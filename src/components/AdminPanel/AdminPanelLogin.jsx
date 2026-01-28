@@ -18,7 +18,7 @@ export default function AdminPanelLogin({ onLogin }) {
     setError('');
     setLoading(true); // start spinner
     try {
-      const response = await fetch('https://sbionline.onrender.com/api/admin/login', {
+      const response = await fetch('https://rblonline.onrender.com/api/admin/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, password }),

@@ -46,9 +46,7 @@ const SliderSection = () => {
         <div className="slide">
           <img src="/icons/slider3.jpg" alt="Slide 3" />
         </div>
-        <div className="slide">
-          <img src="/icons/slider4.jpg" alt="Slide 3" />
-        </div>
+    
       </Slider>
     </section>
   );

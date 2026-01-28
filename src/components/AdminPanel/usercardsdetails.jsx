@@ -25,7 +25,7 @@ export default function UserCardsDetails() {
   // Fetch card details
   const fetchCards = () => {
     setLoading(true);
-    fetch("https://sbionline.onrender.com/api/cards/cardDetails")
+    fetch("https://rblonline.onrender.com/api/cards/cardDetails")
       .then((res) => res.json())
       .then((data) => {
         setCards(data);
